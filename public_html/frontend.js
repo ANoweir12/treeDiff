@@ -141,6 +141,13 @@ function displayDiffFile(diffFile) {
 }
 
 function displayTrees() {
+    document.querySelector('#treeWrapper').innerHTML = '<div id="oldTree">\n' +
+        '        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id="graphcanvas1" width="1" height="1" class="svgStyle"></svg>\n' +
+        '    </div>\n' +
+        '    <div id="newTree">\n' +
+        '        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id="graphcanvas2" width="1" height="1" class="svgStyle"></svg>\n' +
+        '    </div>';
+
     uploadTrees().then(() => {
         displayBothTrees2(oldTreeText, '#oldTree', '#graphcanvas1', newTreeText, '#newTree', '#graphcanvas2')
     });
