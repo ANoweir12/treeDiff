@@ -1,0 +1,56 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements/>
+  <endpoints>
+    <timeout>http://gruppe.wst.univie.ac.at/~mangler/services/timeout.php</timeout>
+    <instantiate>http://localhost:9296/url/</instantiate>
+  </endpoints>
+  <positions/>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a1" endpoint="instantiate">
+        <parameters>
+          <label>Take 5</label>
+          <method>:post</method>
+          <arguments>
+            <info>Take Time</info>
+            <behavior>wait_running</behavior>
+            <url>http://localhost/testsets/Take_5.xml</url>
+            <init>
+              <a>3</a>
+            </init>
+          </arguments>
+        </parameters>
+        <code>
+          <finalize output="result">data.instance = result['CPEE-INSTANCE']
+data.res = result</finalize>
+          <update output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_min/>
+            <_timing_max/>
+            <_timing_avg/>
+          </_timing>
+          <_notes>
+            <_notes_general/>
+            <_notes_output/>
+            <_attachments/>
+          </_notes>
+        </annotations>
+      </call>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+  <attributes>
+    <info>Subprocess</info>
+    <modeltype>CPEE</modeltype>
+    <theme>preset</theme>
+    <customer>pilotfabrik</customer>
+    <status>development</status>
+  </attributes>
+</testset>

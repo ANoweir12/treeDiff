@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jquery": "^3.7.0",
+    "netscape": "^0.0.5",
+    "path": "^0.12.7"
+  }
+}

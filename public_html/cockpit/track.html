@@ -1,0 +1,136 @@
+<!--
+  This file is part of CPEE.
+
+  CPEE is free software: you can redistribute it and/or modify it under the terms
+  of the GNU General Public License as published by the Free Software Foundation,
+  either version 3 of the License, or (at your option) any later version.
+
+  CPEE is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  CPEE (file COPYING in the main directory).  If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>CPEE Cockpit</title>
+
+    <!-- libs, do not modify. When local than load local libs. -->
+    <script type="text/javascript" src="/js_libs/jquery.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.browser.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.svg.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.svgdom.min.js"></script>
+    <script type="text/javascript" src="/js_libs/vkbeautify.js"></script>
+    <script type="text/javascript" src="/js_libs/util.js"></script>
+    <script type="text/javascript" src="/js_libs/printf.js"></script>
+    <script type="text/javascript" src="/js_libs/strftime.min.js"></script>
+    <script type="text/javascript" src="/js_libs/parsequery.js"></script>
+    <script type="text/javascript" src="/js_libs/underscore.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.caret.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.cookie.js"></script>
+
+    <script type="text/javascript" src="/js_libs/relaxngui.js"></script>
+
+    <script type="text/javascript" src="/js_libs/uidash.js"></script>
+    <script type="text/javascript" src="/js_libs/custommenu.js"></script>
+
+    <link   rel="stylesheet"      href="/js_libs/custommenu.css" type="text/css"/>
+    <link   rel="stylesheet"      href="/js_libs/uidash.css" type="text/css"/>
+
+    <link   rel="stylesheet"      href="/js_libs/relaxngui.css" type="text/css"/>
+
+    <!-- modelling ui -->
+    <script type="text/javascript" src="js/wfadaptor.js"></script>
+    <link rel="stylesheet" href="css/wfadaptor.css" type="text/css"/>
+
+    <!-- custom stuff, play arround  -->
+    <script type="text/javascript" src="js/ui.js"></script>
+    <script type="text/javascript" src="js/instance.js"></script>
+    <script type="text/javascript" src="js/details.js"></script>
+    <script type="text/javascript" src="js/parameters.js"></script>
+    <script type="text/javascript" src="js/track.js"></script>
+    <script type="text/javascript" src="js/modifiers.js"></script>
+    <link rel="stylesheet" href="css/uiOldTree.css" type="text/css"/>
+    <link rel="stylesheet" href="css/track.css" type="text/css"/>
+  </head>
+  <body data-base-port="8298" data-res-port="9303" data-theme-base="themes" is="x-ui-">
+    <div class='hidden' id='relaxngworker'></div>
+    <div id="trackfull">
+      <div id='graphcolumn'>
+        <div id="trackusage">
+          <div id='tracktitle'>
+            <span>
+              <a class="x-ui-button" name="glob_reload" title='reload' href=''>
+                <svg viewBox="0 -1.5 7 12" width="10" height="16">
+                  <path
+										style="fill:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stop-color:#000000"
+     								d="M 3.5,1.5 C 1.431441,1.5001975 -0.24540803,3.1770466 -0.24560554,5.2456055 -0.2454082,7.3141647 1.4314408,8.991014 3.5,8.9912113 5.5685591,8.991014 7.2454081,7.3141647 7.2456054,5.2456055 7.2454079,3.1770466 5.5685589,1.5001975 3.5,1.5 Z M 3.437195,4.0616198 c 0.020931,-5.551e-4 0.041873,-5.551e-4 0.062805,0 0.6537674,3.133e-4 1.1836723,0.5302183 1.1839856,1.1839857 C 4.6836723,5.8993729 4.1537674,6.4292778 3.5,6.4295912 2.8462325,6.4292778 2.3163276,5.8993729 2.3160142,5.2456055 2.315414,4.6155841 2.8080758,4.0953252 3.437195,4.0616198 Z"/>
+                </svg>
+              </a>
+              <a class="x-ui-button" name="glob_edit" title='edit' target='_blank' href='' id='current-monitor'><svg viewBox="0 -1.5 7 12" width="10" height="16">
+                  <path
+                     style="fill:#000000;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     d="M -0.25,7.8194404 0.57057194,10.599984 3.1882886,9.3540573 Z"/>
+                  <path
+                     style="fill:#000000;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     d="M 3.5215262,8.6074434 6.0527848,2.9361926 2.6144961,1.4015756 0.08323736,7.0728263 Z"/>
+                  <path
+                     style="fill:#000000;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     d="M 6.4439758,2.0597335 6.9719316,0.87685566 3.533643,-0.6577613 3.005687,0.52511656 Z"/>
+                </svg></a>
+              <a class="x-ui-button" name="glob_unshow" title='unshow'>
+                <svg viewBox="0 -1.5 7 12" width="10" height="16">
+                    <path
+                      style="fill:#000000;stroke-width:0;stop-color:#000000"
+                      d="M 5.75,1.4999999 3.5,3.75 1.25,1.4999999 -0.25000013,3 2,5.25 -0.25000013,7.5 1.25,9.0000002 3.5,6.75 5.75,9.0000002 7.2500001,7.5 5,5.25 7.2500001,3 Z"/>
+                </svg>
+              </a>
+            </span>
+            <span> - </span>
+            <span id="title">Loading ...</span><span> <a style='display:none' target='_blank' id='current-log'>L</a></span>
+          </div>
+          <div id='state'>
+            <span id="state_any">
+              <button name="state_start" title='start' style='display:none'>
+                <svg viewBox="0 -1.5 7 12" width="10" height="16">
+                  <path
+                    style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                    d="M 1.1000001e-6,1.0403124e-6 5.0000006e-7,10.583335 6.6145841,5.2916677 Z"/>
+                </svg>
+              </button>
+              <button name="state_stop" title='stop'>
+                <svg viewBox="0 -1.5 7 12" width="10" height="16">
+                  <path
+                    style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                    d="m 3.9687505,1.3375769 1e-6,7.9374995 2.645832,1e-6 V 1.3375772 Z m -3.96875,0 v 7.9375005 h 2.645833 V 1.3375769 Z"/>
+                </svg>
+              </button>
+              <span id="state_extended">
+                <button name="state_abandon" title='abandon'>
+                  <svg viewBox="0 -1.5 7 12" width="10" height="16">
+                    <path
+                      style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                      d="m 5e-7,1.3229172 h 2.645833 V 5.0000007e-7 h 1.322917 V 1.3229172 h 2.645833 V 2.6458339 H 5e-7 Z m 2.645833,2.6458332 v 3.96875 l 1.322917,10e-8 v -3.96875 z M 5e-7,10.583333 l 6.614584,1e-6 -1e-6,-6.6145835 h -1.322916 v 5.2916667 h -3.96875 V 3.9687505 H 5e-7 Z"/>
+                  </svg>
+                </button>
+              </span>
+              <span> - Status: </span>
+            </span>
+            <span id="state_text">loading ...</span>
+          </div>
+        </div>
+        <div id='graphgrid'>
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id='graphcanvas' width='1' height='1'></svg>
+        </div>
+      </div>
+      <div id='trackcolumn'>
+      </div>
+    </div>
+  </body>
+</html>

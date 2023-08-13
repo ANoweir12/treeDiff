@@ -1,0 +1,245 @@
+body {
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  font-family: sans-serif;
+  font-size: 1em;
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+#newTree {
+  display: grid;
+  grid-gap: 0;
+  width: 100%;
+}
+#graphcanvas2 {
+  grid-column: 1;
+}
+#newTree .graphlabel {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  display: flex;
+  flex-direction: row;
+}
+#newTree .graphempty {
+  padding-left: 0.5em;
+  display: flex;
+  flex-direction: row;
+}
+#newTree .graphlast {
+  padding-left: 0.5em;
+  display: flex;
+  flex-direction: row;
+}
+#newTree.striped .graphlabel, #newTree.striped .graphempty {
+  border-left: 1pt solid var(--wfadaptor-border);
+}
+#newTree.striped .graphlabel.even, #newTree.striped .graphempty.even, #newTree.striped .graphlast.even {
+  background-color: #e9e9e9;
+}
+#newTree .graphlabel > span {
+  align-self: center;
+  white-space: nowrap;
+}
+#newTree .graphlabel.hover {
+  color: var(--wfadaptor-selected);
+  cursor: pointer;
+}
+#newTree .graphlabel.selected {
+  color: var(--wfadaptor-selected);
+}
+
+#newTree .graphlabel.selected a, #newTree .graphlabel.hover a {
+  color: var(--wfadaptor-selected);
+}
+#newTree .graphlabel a {
+  color: var(--x-ui-light-text-color);
+}
+#newTree .graphlabel a::after {
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 0.8em;
+  text-rendering: auto;
+	content: ' ';
+}
+#newTree .graphlabel.selected a::after, newTree .graphlabel.hover a::after {
+  color: var(--wfadaptor-selected);
+}
+
+#instance ui-content { height: 7em; }
+
+#areanew td:nth-child(2)       { padding-top: 0.4em; padding-bottom: 0.4em; }
+#areanew td:nth-child(1)       { width: 7em; padding-right: 1em; }
+#areanew td:nth-child(3)       { width: 16em; padding-left: 1em; }
+#areanew input                 {
+  width: 100%;
+  padding: 0.1em 0.5em;
+  border: 0.1em solid var(--x-ui-border-color);
+  border-radius: 0;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+#areanew button[name=base]     { width: 100%; padding: 0.5em 1em; margin-bottom: 0.1em; }
+#areanew button[name=instance] { width: 100%; padding: 0.5em 1em; }
+
+ui-tabbed ui-tabbar ui-behind button {
+  margin-left: 0.5em;
+}
+
+#current-instance[href]:after {
+  content: "|";
+}
+#current-instance-properties[href]:after {
+  content: "|";
+}
+#current-instance-subscriptions[href]:after {
+  content: "|";
+}
+#current-graph[href]:before {
+  content: "|";
+}
+
+#parameters ui-content { height: 8.5em; min-height: 2.7em; }
+
+#areadataelements, #areaendpoints, #areaattributes {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height: 100%;
+}
+#areadataelements > button, #areaendpoints > button, #areaattributes > button {
+  height: 100%;
+  padding: 0;
+  margin-right: 0.5em;
+}
+#areadataelements > button span, #areaendpoints > button span, #areaattributes > button span {
+  display: inline-block;
+  transform: rotate(-90deg);
+}
+#areadataelements.inactive, #areaendpoints.inactive, #areaattributes.inactive { display: none; }
+#areadataelements button.relaxngui_control { display: none; }
+#areaendpoints button.relaxngui_control { display: none; }
+#areaattributes button.relaxngui_control { display: none; }
+
+#areainstance                          { height: 100%; }
+#areainstance > div                    { display: flex; height: 100%; }
+#areainstance input[type=file]         { display: none; }
+#areainstance div.section              { vertical-align: middle; height: 100%; }
+#areainstance div.section:nth-child(1) { flex: 0 0 auto;                                                  padding: 0 0.5em 0 0; white-space: nowrap; }
+#areainstance div.section:nth-child(2) { flex: 0 0 auto; border-left: 1px solid var(--x-ui-border-color); padding: 0 0.5em;     white-space: nowrap; }
+#areainstance div.section:nth-child(3) { flex: 1 1 auto; border-left: 1px solid var(--x-ui-border-color); padding: 0 0 0 0.5em; }
+
+#areainstance div.section:nth-child(1) > div:nth-child(2)             { white-space: normal; text-align: right; }
+
+#areainstance div.section:nth-child(1) div                          { white-space: normal; vertical-align: middle; margin: 0; padding: 0; }
+#areainstance div.section:nth-child(1) button                       { white-space: normal; vertical-align: middle; margin: 0; padding: 0; }
+#areainstance div.section:nth-child(1) button[name=loadtestset]     { white-space: normal; width: 10em; height: 3.5em; }
+#areainstance div.section:nth-child(1) button[name=save]            { white-space: normal; width: 10em; height: 3.5em; margin-left: 0.2em; }
+#areainstance div.section:nth-child(1) button[name=loadtestsetfile] { white-space: normal; width: 10em; height: 3.5em; margin-left: 0.2em; }
+#areainstance div.section:nth-child(1) button[name=loadmodelfile]   { white-space: normal; width: 10em; height: 2em;   margin-top: 0.2em; }
+
+#areainstance div.section:nth-child(2) button                       { white-space: normal; width: 6em; height: 5.7em; vertical-align: middle; margin: 0; padding: 0; }
+
+#areainstance div.section:nth-child(3)                                { overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column; flex-wrap: wrap; justify-content: flex-start; align-content: flex-start; }
+#areainstance div.section:nth-child(3) strong                         { margin:0; padding:0; white-space: normal; font-size: 0.7em; }
+#areainstance div.section:nth-child(3) > div                          { padding-bottom: 0.2em; flex: 0 0 auto; padding-right: 1em; }
+#areainstance div.section:nth-child(3) select                         { margin-left: 1em;  }
+#areainstance div.section:nth-child(3) div.additional                 { margin: 0 1em; font-size: 0.9em; }
+
+#areaexecution input { padding: 0; margin:0; }
+#areaexecution table.x-ui-compact { width: 100%; }
+#areaexecution table.x-ui-compact tr td:nth-child(1) { width: 15ex; }
+
+#areaexecution table.x-ui-compact tbody.debug tr:last-child td { padding-bottom: 0.5em; }
+#areaexecution table.x-ui-compact tbody.debug tr:last-child td input { vertical-align: middle; }
+#areaexecution table.x-ui-compact tbody.exe tr:first-child td { padding-top: 0.5em; }
+#areaexecution table.x-ui-compact tbody.exe { border-top: 1px solid var(--x-ui-border-color); }
+
+#areaexecution table.x-ui-compact tbody.exe td { height: 2.2em; }
+
+#arealog > div {  padding-left: 1em; padding-top: 1em; }
+
+#dat_endpoints {
+  border-collapse:collapse;
+  border-spacing:0;
+  border:0 none;
+  margin:0;
+  padding:0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#dat_dataelements {
+  border-collapse:collapse;
+  border-spacing:0;
+  border:0 none;
+  margin:0;
+  padding:0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+#dat_attributes {
+  border-collapse:collapse;
+  border-spacing:0;
+  border:0 none;
+  margin:0;
+  padding:0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#areadsl div { padding: 0 1em; }
+#areadsl div:first-child { padding-top: 1em; }
+#areadsl div:last-child { padding-bottom: 1em; }
+#areadsl pre {
+  font-family: monospace;
+  font-size:1.3em;
+}
+
+span.active {
+  font-weight: bold;
+  color: #cc0000;
+}
+span.passive {
+  font-weight: bold;
+  color: #3465a4;
+}
+span.vote {
+  font-weight: bold;
+  color: #73d216;
+}
+
+#graphcolumn {
+  margin: 0;
+  padding: 0;
+  border-right: 1px solid var(--x-ui-border-color);
+  min-width: 9em;
+}
+#detailcolumn {
+  padding-left: 1.5em;
+}
+
+#dat_log tr:nth-child(odd) { background-color: #e8e8e8; color: #333; }
+
+#dat_details { border: 0 none; border-top: 1em solid white; border-bottom: 1em solid white; width: inherit; border-right: 1em solid white; }
+
+#disclaimer {
+  padding: 1em;
+  overflow: auto;
+}
+#disclaimer p { max-width: 82ex; text-align: justify; }
+#disclaimer input { margin:0; padding:0; vertical-align:baseline; margin-right: 0.5em; }

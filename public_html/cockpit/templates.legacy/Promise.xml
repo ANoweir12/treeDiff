@@ -1,0 +1,275 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements/>
+  <endpoints>
+    <timeout>http://promise.wst.univie.ac.at:9301/timeout</timeout>
+    <timeout1>http://promise.wst.univie.ac.at:9301/timeout/1</timeout1>
+    <timeout2>http://promise.wst.univie.ac.at:9301/timeout/16</timeout2>
+    <timeout3>http://promise.wst.univie.ac.at:9301/timeout/41</timeout3>
+    <preminder1>http://promise.wst.univie.ac.at:9301/preminder/1</preminder1>
+    <preminder2>http://promise.wst.univie.ac.at:9301/preminder/2</preminder2>
+    <sreminder1>http://promise.wst.univie.ac.at:9301/sreminder/1</sreminder1>
+    <sreminder2>http://promise.wst.univie.ac.at:9301/sreminder/2</sreminder2>
+    <inkasso>http://promise.wst.univie.ac.at:9301/inkasso</inkasso>
+    <customer>http://promise.wst.univie.ac.at:9301/customer</customer>
+    <credit>http://promise.wst.univie.ac.at:9301/credit</credit>
+    <credit_worthy>http://promise.wst.univie.ac.at:9301/credit/worthy</credit_worthy>
+    <activation>http://promise.wst.univie.ac.at:9301/activation</activation>
+    <zaehler>http://promise.wst.univie.ac.at:9301/zaehler</zaehler>
+    <update>http://promise.wst.univie.ac.at:9301/update</update>
+    <consume>http://promise.wst.univie.ac.at:9301/consume</consume>
+    <decide>http://promise.wst.univie.ac.at:9301/decide</decide>
+    <credit_consume>http://promise.wst.univie.ac.at:9301/credit/consume</credit_consume>
+    <credit_activate>http://promise.wst.univie.ac.at:9301/credit/activate</credit_activate>
+  </endpoints>
+  <positions/>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a20" endpoint="customer" svg-label="Generate Customer">
+        <parameters>
+          <label>"Generate Customer"</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+        <code>
+          <finalize>data.knr=result[0].value;data.status="normal";data.zaehlerid=result[1].value</finalize>
+        </code>
+      </call>
+      <call id="a10" endpoint="sreminder1" svg-label="Sendung erste Mahnung">
+        <parameters>
+          <label>"Sent first Reminder"</label>
+          <method>:post</method>
+          <arguments>
+            <knr>data.knr</knr>
+          </arguments>
+          <type>:task</type>
+          <mid>'sid-5CD9191C-7233-414F-8EF4-A4E1A8D39E07'</mid>
+        </parameters>
+      </call>
+      <parallel wait="1" svg-label="">
+        <parallel_branch svg-label="">
+          <call id="a14" endpoint="timeout1" svg-label="2-woechige Frist">
+            <parameters>
+              <label>"1. 2 week deadline"</label>
+              <method>:post</method>
+              <arguments>
+                <timeout>2</timeout>
+              </arguments>
+            </parameters>
+          </call>
+          <call id="a11" endpoint="sreminder2" svg-label="Senden zweite Mahnung">
+            <parameters>
+              <label>"Send second reminder"</label>
+              <method>:post</method>
+              <arguments>
+                <knr>data.knr</knr>
+              </arguments>
+              <type>:task</type>
+              <mid>'sid-8417E18E-016C-4F87-86FC-216475C1C029'</mid>
+            </parameters>
+          </call>
+          <parallel wait="1" svg-label="">
+            <parallel_branch svg-label="">
+              <call id="a7" endpoint="timeout2" svg-label="2-woechige Frist">
+                <parameters>
+                  <label>"2. 2 week deadline"</label>
+                  <method>:post</method>
+                  <arguments>
+                    <timeout>2</timeout>
+                  </arguments>
+                </parameters>
+              </call>
+              <call id="a1" endpoint="inkasso" svg-label="Registrierung als Inkassokunde">
+                <parameters>
+                  <label>"Register as debt customer"</label>
+                  <method>:put</method>
+                  <arguments>
+                    <status>data.status</status>
+                  </arguments>
+                </parameters>
+                <code>
+                  <finalize>data.status=result[0].value;data.zaehler_status='normal'</finalize>
+                </code>
+              </call>
+              <parallel wait="-1" svg-label="">
+                <parallel_branch svg-label="">
+                  <call id="a4" endpoint="activation" svg-label="Aktivierung Register fuer Guthaben und Anzeige am Display (Prepayment)">
+                    <parameters>
+                      <label>"Activate register for credit and display (prepayment)"</label>
+                      <method>:post</method>
+                      <type>:task</type>
+                      <mid>'sid-032C8450-4DF9-435B-8105-F0C13734A7A8'</mid>
+                      <arguments>
+                        <knr>data.knr</knr>
+                      </arguments>
+                    </parameters>
+                  </call>
+                </parallel_branch>
+                <parallel_branch svg-label="">
+                  <call id="a2" endpoint="inkasso" svg-label="Umparametrierung des Zaehlers von Normal- auf Inkassobetrieb">
+                    <parameters>
+                      <label>"Parametrize meter from normal to debt operation "</label>
+                      <method>:put</method>
+                      <arguments>
+                        <zaehlerid>data.zaehlerid</zaehlerid>
+                        <status>data.zaehler_status</status>
+                      </arguments>
+                    </parameters>
+                    <code>
+                      <finalize>data.zaehler_status=result[0].value</finalize>
+                    </code>
+                  </call>
+                </parallel_branch>
+              </parallel>
+              <call id="a6" endpoint="update" svg-label="Aktualisierung Guthaben">
+                <parameters>
+                  <label>"Create credit"</label>
+                  <method>:post</method>
+                  <arguments/>
+                </parameters>
+                <code>
+                  <finalize>data.wartefrist="ok";data.guthaben=result[0].value.to_i</finalize>
+                </code>
+              </call>
+              <call id="a3" endpoint="timeout3" svg-label="Aufladen">
+                <parameters>
+                  <label>"Upate Credit"</label>
+                  <method>:post</method>
+                  <arguments/>
+                </parameters>
+                <code>
+                  <finalize>p data.guthaben</finalize>
+                </code>
+              </call>
+              <loop mode="pre_test" condition="data.wartefrist!='verstrichen'" svg-label="">
+                <loop mode="pre_test" condition="data.guthaben&gt;0" svg-label="">
+                  <call id="a5" endpoint="consume" svg-label="Verbrauchen">
+                    <parameters>
+                      <label>"Consume Credit"</label>
+                      <method>:post</method>
+                      <arguments>
+                        <knr>data.knr</knr>
+                      </arguments>
+                    </parameters>
+                    <code>
+                      <finalize>data.guthaben=data.guthaben-result[0].value.to_i</finalize>
+                    </code>
+                  </call>
+                </loop>
+                <call id="a13" endpoint="decide" svg-label="Gesetzl. Frist">
+                  <parameters>
+                    <label>"Legal waiting time"</label>
+                    <method>:post</method>
+                    <arguments>
+                      <knr>data.knr</knr>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <finalize>data.wartefrist="verstrichen" if result[0].name == 'wartefrist';data.guthaben=result[0].value.to_i if result[0].name == "balance"</finalize>
+                  </code>
+                </call>
+              </loop>
+              <call id="a17" endpoint="timeout" svg-label="Abschaltung">
+                <parameters>
+                  <label>"Trigger switching off"</label>
+                  <method>:post</method>
+                  <arguments>
+                    <knr>data.knr</knr>
+                  </arguments>
+                </parameters>
+                <code>
+                  <finalize>data.zaehler_status='off'</finalize>
+                </code>
+              </call>
+              <call id="a8" endpoint="credit_worthy" svg-label="Kreditwuerdig">
+                <parameters>
+                  <label>"Creditworthy"</label>
+                  <method>:post</method>
+                  <arguments>
+                    <knr>data.knr</knr>
+                  </arguments>
+                </parameters>
+                <code>
+                  <finalize>data.kreditf=result[0].value;data.kredit_wanted="true"</finalize>
+                </code>
+              </call>
+              <choose mode="exclusive" svg-label="">
+                <alternative condition="data.kreditf=='true'" svg-label="">
+                  <call id="a12" endpoint="timeout" svg-label="activate parametrizable credit function and credit offer">
+                    <parameters>
+                      <label>"activate parametrizable credit function and credit offer"</label>
+                      <method>:post</method>
+                      <arguments>
+                        <knr>data.knr</knr>
+                      </arguments>
+                    </parameters>
+                  </call>
+                  <choose mode="exclusive" svg-label="">
+                    <alternative condition="data.kredit_wanted=='true'" svg-label="">
+                      <call id="a18" endpoint="credit_activate" svg-label="activate meter">
+                        <parameters>
+                          <label>"activate meter"</label>
+                          <method>:post</method>
+                          <arguments>
+                            <knr>knr=data.knr</knr>
+                          </arguments>
+                        </parameters>
+                        <code>
+                          <finalize>data.kredit=result[0].value.to_i</finalize>
+                        </code>
+                      </call>
+                      <loop mode="pre_test" condition="data.kredit&gt;0" svg-label="">
+                        <call id="a19" endpoint="credit_consume" svg-label="Consume credit">
+                          <parameters>
+                            <label>"Consume credit"</label>
+                            <method>:post</method>
+                            <arguments>
+                              <knr>knr=data.knr</knr>
+                            </arguments>
+                          </parameters>
+                          <code>
+                            <finalize>data.kredit=data.kredit-result[0].value.to_i</finalize>
+                          </code>
+                        </call>
+                      </loop>
+                    </alternative>
+                    <otherwise svg-label=""/>
+                  </choose>
+                </alternative>
+                <otherwise svg-label=""/>
+              </choose>
+            </parallel_branch>
+            <parallel_branch svg-label="">
+              <call id="a9" endpoint="preminder2" svg-label="Kunde zahlt">
+                <parameters>
+                  <label>"paying2 "</label>
+                  <method>:post</method>
+                  <arguments/>
+                </parameters>
+              </call>
+            </parallel_branch>
+          </parallel>
+        </parallel_branch>
+        <parallel_branch svg-label="">
+          <call id="a15" endpoint="preminder1" svg-label="Kunde zahlt">
+            <parameters>
+              <label>"paying1"</label>
+              <method>:post</method>
+              <arguments/>
+            </parameters>
+          </call>
+        </parallel_branch>
+      </parallel>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+  <attributes>
+    <theme>preset</theme>
+    <info>ss</info>
+    <modeltype>CPEE</modeltype>
+  </attributes>
+</testset>

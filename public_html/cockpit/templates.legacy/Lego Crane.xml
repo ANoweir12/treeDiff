@@ -1,0 +1,87 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements/>
+  <endpoints>
+    <timeout>http://gruppe.wst.univie.ac.at/~mangler/services/timeout.php</timeout>
+    <cranepos>http://cranex.wst.univie.ac.at:9200/pos</cranepos>
+    <onoff>http://craney.wst.univie.ac.at:9200/onoff</onoff>
+    <raise>http://craney.wst.univie.ac.at:9200/raise</raise>
+    <lower>http://craney.wst.univie.ac.at:9200/lower</lower>
+  </endpoints>
+  <positions/>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a1" endpoint="onoff">
+        <parameters>
+          <label>TurnOn</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a3" endpoint="raise">
+        <parameters>
+          <label>Raise</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a2" endpoint="cranepos">
+        <parameters>
+          <label>Go To Plate</label>
+          <method>:post</method>
+          <arguments>
+            <data>2</data>
+          </arguments>
+        </parameters>
+      </call>
+      <call id="a4" endpoint="lower">
+        <parameters>
+          <label>Lower</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a5" endpoint="onoff">
+        <parameters>
+          <label>TurnOff</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a6" endpoint="raise">
+        <parameters>
+          <label>Raise</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a7" endpoint="cranepos">
+        <parameters>
+          <label>Go to Conveyor</label>
+          <method>:post</method>
+          <arguments>
+            <data>0</data>
+          </arguments>
+        </parameters>
+      </call>
+      <call id="a8" endpoint="lower">
+        <parameters>
+          <label>Lower</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+  <attributes>
+    <info>s</info>
+    <modeltype>CPEE</modeltype>
+    <theme>preset</theme>
+    <bc>operate</bc>
+  </attributes>
+</testset>

@@ -1,0 +1,60 @@
+#trackfull {
+  display: flex;
+  flex-direction:row;
+  align-items: stretch;
+  height: 100vh;
+}
+#graphcolumn {
+  flex: 0 1 auto;
+  width: 40em;
+  min-width: 15em;
+  border-right: 0 none;
+  overflow: auto;
+}
+#graphcolumn.resize {
+  resize: horizontal;
+}
+
+#trackcolumn {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction:column;
+  align-items: stretch;
+}
+
+#trackcolumn iframe {
+  flex: 1 1 auto;
+  border: 0 none;
+  padding: 0;
+  margin: 0;
+  border-left: 0.1em solid var(--x-ui-border-color);
+  border-bottom: 0.1em solid var(--x-ui-border-color);
+  overflow: scroll;
+}
+
+#trackusage {
+  line-height: 2em;
+  margin-top: 0.5em;
+  margin-left: 2em;
+  margin-right: 1em;
+}
+#trackusage button {
+  width: 2em;
+  height: 2em;
+  vertical-align: middle;
+}
+#current-instance[href]:after {
+  content: "";
+}
+
+#tracktitle {
+  white-space: nowrap;
+  margin-bottom: 0.1em;
+}
+
+#current-log[href]:before {
+  content: "[";
+}
+#current-log[href]:after {
+  content: "]";
+}

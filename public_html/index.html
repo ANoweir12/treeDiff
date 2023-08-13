@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Process Tree Diff</title>
+    <style>
+        .file-label {
+            font-weight: bold;
+        }
+    </style>
+    <link rel="stylesheet" href="/~ge59juj/cockpit/css/wfadaptor.css">
+    <link rel="stylesheet" href="tree_styling.css">
+    <link rel="stylesheet" href="/~ge59juj/cockpit/css/uiOldTree.css">
+    <link rel="stylesheet" href="/~ge59juj/cockpit/css/uiNewTree.css">
+    <script src="/~ge59juj/js_libs/jquery.min.js"></script>
+    <script src="/~ge59juj/js_libs/underscore.min.js"></script>
+    <script src="/~ge59juj/cockpit/js/wfadaptor.js"></script>
+    <script src="/~ge59juj/js_libs/util.js"></script>
+    <script src="my_jquery.js"></script>
+    <script src="frontend.js"></script>
+</head>
+<body data-backend="/ports/27271/diff" onload="createBibliography()">
+<h1>Process Tree Diff</h1>
+
+<div>
+    <label class="file-label" for="fileInput1">Old Process Tree:</label>
+    <input type="file" id="fileInput1">
+</div>
+<div>
+    <label class="file-label" for="fileInput2">New Process Tree:</label>
+    <input type="file" id="fileInput2">
+</div>
+
+<button onclick="uploadTrees()">Calculate Diff</button>
+<button onclick="displayTrees()">Display Trees</button>
+
+
+<hr>
+
+<div id="bibliography"></div>
+<div id="diffOutput"></div>
+
+<div id="treeWrapper">
+    <div id="oldTree">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id="graphcanvas1" width="1" height="1" class="svgStyle"></svg>
+    </div>
+    <div id="newTree">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id="graphcanvas2" width="1" height="1" class="svgStyle"></svg>
+    </div>
+</div>
+</body>
+</html>

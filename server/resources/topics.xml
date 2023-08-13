@@ -1,0 +1,76 @@
+<!--
+  This file is part of CPEE.
+
+  CPEE is free software: you can redistribute it and/or modify it under the terms
+  of the GNU General Public License as published by the Free Software Foundation,
+  either version 3 of the License, or (at your option) any later version.
+
+  CPEE is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  CPEE (file COPYING in the main directory).  If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+
+<topics xmlns='http://riddl.org/ns/common-patterns/notifications-producer/1.0'>
+  <topic id='activity'>
+    <event>calling</event>
+    <event>receiving</event>
+    <event>failed</event>
+    <event>manipulating</event>
+    <event>status</event>
+    <event>done</event>
+    <vote>syncing_before</vote>
+    <vote>syncing_after</vote>
+  </topic>
+  <topic id='gateway'>
+    <event>decide</event>
+    <event>join</event>
+  </topic>
+  <topic id='position'>
+    <event>change</event>
+  </topic>
+  <topic id='description'>
+    <event>change</event>
+    <event>error</event>
+    <vote>modify</vote>
+  </topic>
+  <topic id='state'>
+    <event>change</event>
+    <vote>change</vote>
+  </topic>
+  <topic id='status'>
+    <event>resource_utilization</event>
+    <event>change</event>
+  </topic>
+  <topic id='dataelements'>
+    <event>change</event>
+  </topic>
+  <topic id='endpoints'>
+    <event>change</event>
+  </topic>
+  <topic id='attributes'>
+    <event>change</event>
+  </topic>
+  <topic id='executionhandler'>
+    <event>change</event>
+    <event>error</event>
+  </topic>
+  <topic id='transformation'>
+    <event>change</event>
+  </topic>
+  <topic id='handler'>
+    <event>change</event>
+  </topic>
+  <topic id='simulating'>
+    <event>step</event>
+  </topic>
+  <topic id='task'>
+    <event>instantiation</event>
+    <event>error</event>
+    <event>debug</event>
+    <event>info</event>
+  </topic>
+</topics>

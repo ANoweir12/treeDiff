@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements>
+    <i>0</i>
+  </dataelements>
+  <endpoints>
+    <start_url>https://cpee.org/flow/start/url/</start_url>
+  </endpoints>
+  <attributes>
+    <info>Track Test</info>
+    <modeltype>CPEE</modeltype>
+    <theme>default</theme>
+    <customer>pilotfabrik</customer>
+    <status>development</status>
+    <creator>Christine Ashcreek</creator>
+    <author>Christine Ashcreek</author>
+    <design_stage>development</design_stage>
+    <design_dir>Templates.dir</design_dir>
+  </attributes>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <loop mode="pre_test" condition="true">
+        <parallel wait="-1">
+          <loop mode="pre_test" condition="data.i &lt; 4">
+            <_probability>
+              <_probability_min/>
+              <_probability_max/>
+              <_probability_avg/>
+            </_probability>
+            <parallel_branch>
+              <call id="a1" endpoint="start_url">
+                <parameters>
+                  <label>Start</label>
+                  <method>:post</method>
+                  <arguments>
+                    <behavior>wait_running</behavior>
+                    <url>https://cpee.org/flow/templates/instantiate/Take_Sub.xml</url>
+                    <init>
+                      <time>5</time>
+                    </init>
+                    <endpoints/>
+                    <customization/>
+                  </arguments>
+                </parameters>
+                <annotations>
+                  <_timing>
+                    <_timing_weight/>
+                    <_timing_avg/>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <explanations/>
+                  </_timing>
+                  <_notes>
+                    <_notes_general/>
+                  </_notes>
+                </annotations>
+                <documentation>
+                  <input/>
+                  <output/>
+                  <implementation>
+                    <description/>
+                  </implementation>
+                </documentation>
+              </call>
+            </parallel_branch>
+            <manipulate id="a4" label="">data.i += 1</manipulate>
+          </loop>
+        </parallel>
+        <manipulate id="a3" label="">data.i = 0</manipulate>
+        <_probability>
+          <_probability_min/>
+          <_probability_max/>
+          <_probability_avg/>
+        </_probability>
+        <stop id="a2"/>
+      </loop>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+</testset>

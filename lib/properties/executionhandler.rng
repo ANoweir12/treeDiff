@@ -1,0 +1,9 @@
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <define name="executionhandler">
+    <element name="executionhandler" ns="http://cpee.org/ns/properties/2.0">
+      <data type="string">
+        <param name="pattern">[a-zA-Z]+</param>
+      </data>
+    </element>
+  </define>
+</grammar>

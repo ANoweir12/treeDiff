@@ -1,0 +1,55 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements/>
+  <endpoints>
+    <timeout>http://gruppe.wst.univie.ac.at/~mangler/services/timeout.php</timeout>
+    <klaueauf>http://ejector.wst.univie.ac.at:9200/klaue/auf</klaueauf>
+    <klauezu>http://ejector.wst.univie.ac.at:9200/klaue/zu</klauezu>
+    <plate>http://ejector.wst.univie.ac.at:9200/goto/plate</plate>
+    <goexit>http://ejector.wst.univie.ac.at:9200/goto/exit</goexit>
+  </endpoints>
+  <positions/>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a1" endpoint="plate">
+        <parameters>
+          <label>Go to plate</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a2" endpoint="klauezu">
+        <parameters>
+          <label>Close Claw</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a3" endpoint="goexit">
+        <parameters>
+          <label>Go To Exit</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+      <call id="a4" endpoint="klaueauf">
+        <parameters>
+          <label>Claw open</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+      </call>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+  <attributes>
+    <info>asda</info>
+    <modeltype>CPEE</modeltype>
+    <theme>preset</theme>
+    <bc>operate</bc>
+  </attributes>
+</testset>

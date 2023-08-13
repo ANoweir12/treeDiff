@@ -1,0 +1,94 @@
+#treeWrapper{
+    display: flex;
+    flex-direction: row;
+}
+
+#bibliography {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+rect.diffaddodd{
+    fill: #ABF5D1 !important;
+}
+
+rect.diffaddeven{
+    fill: #87DEB3 !important;
+}
+
+div.diffaddodd{
+    background-color: #ABF5D1 !important;
+}
+
+div.diffaddeven{
+    background-color: #87DEB3 !important;
+}
+
+rect.diffremoveodd{
+    fill: #FA9D9D !important;
+}
+
+rect.diffremoveeven{
+    fill: #FA8383 !important;
+}
+
+div.diffremoveodd{
+    background-color: #FA9D9D !important;
+}
+
+div.diffremoveeven{
+    background-color: #FA8383 !important;
+}
+
+rect.diffmoveodd{
+    fill: #92ceec !important;
+}
+
+rect.diffmoveeven{
+    fill: #7eb3cd !important;
+}
+
+div.diffmoveodd{
+    background-color: #92ceec !important;
+}
+
+div.diffmoveeven{
+    background-color: #7eb3cd !important;
+}
+
+rect.diffupdateodd{
+    fill: #e3e372 !important;
+}
+
+rect.diffupdateeven{
+    fill: #cdcd67 !important;
+}
+
+div.diffupdateodd{
+    background-color: #e3e372 !important;
+}
+
+div.diffupdateeven{
+    background-color: #cdcd67 !important;
+}
+
+rect.diffupdateodd.diffmoveodd{
+    fill: url(#diagonalHatchOdd) !important;
+}
+
+rect.diffupdateeven.diffmoveeven{
+    fill: url(#diagonalHatchEven) !important;
+}
+
+div.diffupdateodd.diffmoveodd{
+    background-image: linear-gradient(45deg, #e3e372 25%, transparent 25%, transparent 50%, #e3e372 50%, #e3e372 75%, transparent 75%, #92ceec);
+    background-size: 50px 50px;
+    background-color: #92ceec !important;
+}
+
+div.diffupdateeven.diffmoveeven{
+    background-image: linear-gradient(45deg, #cdcd67 25%, transparent 25%, transparent 50%, #cdcd67 50%, #cdcd67 75%, transparent 75%, #7eb3cd);
+    background-size: 50px 50px;
+    background-color: #7eb3cd !important;
+}
