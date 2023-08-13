@@ -3,6 +3,7 @@
 
 .ssh
 .cache
+.idea
 
 # User-specific stuff
 .idea/**/workspace.xml
