@@ -463,8 +463,8 @@ function displayBothTrees2(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId,
 }
 
 function displayOneTree2(divId, svgId, xmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray) {
-    return new Promise((resolve, reject) => {
-        let graphrealization = new WfAdaptor('https://lehre.bpm.in.tum.de/~ge59juj/cockpit/themes/extended/theme.js', function (graphrealization) {
+    return new Promise(resolve => {
+        let graphrealization = new WfAdaptor($('body').attr('data-wfadaptor') + '/cockpit/themes/extended/theme.js', function (graphrealization) {
 
             graphrealization.draw_labels = function (max, labels, shift, striped) {
                 // edit labels here
