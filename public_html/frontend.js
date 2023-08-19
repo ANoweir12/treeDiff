@@ -253,8 +253,10 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
                 const newPathArray = newPath.split("/").map(Number);
                 let indexCurrentTree = getIndexFromArrayAccordingToPath(arrayOfOldTreeClone, oldPathArray, false);
                 let colorOperations = [];
+                let originPaths = [];
                 for (let j = indexCurrentTree; j < indexCurrentTree + necessaryEmptyCount(arrayOfOldTreeClone[indexCurrentTree].treeElement); j++) {
                     colorOperations.push(JSON.parse(JSON.stringify(arrayOfOldTreeClone[j].colorOperations)));
+                    originPaths.push(JSON.parse(JSON.stringify(arrayOfOldTreeClone[j].originPath)));
                 }
 
                 let treeElement = arrayOfOldTreeClone[indexCurrentTree].treeElement;
@@ -269,6 +271,7 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
 
                 for (let j = index; j < index + necessaryEmptyCount(arrayOfOldTreeClone[index].treeElement); j++) {
                     arrayOfOldTreeClone[j].colorOperations = colorOperations[j - index];
+                    arrayOfOldTreeClone[j].originPath = originPaths[j - index];
                     arrayOfOldTreeClone[j].emptyInOtherTree = true;
                     arrayOfOldTreeClone[j].colorOperations.push("move");
                     if (newPathArray > oldPathArray) {
@@ -697,19 +700,13 @@ function getIndexFromArrayAccordingToPath(arrayOfTree, oldPath, isPathFromUpdate
     }
 
     if (isPathFromUpdate) {
-        oldPath = oldPath.slice(0, oldPath.length - 1);
+        for (let j = 0; j < 4; j++) {
+            oldPath = oldPath.slice(0, oldPath.length - 1);
 
-        for (let i = 0; i < arrayOfTree.length; i++) {
-            if (arrayOfTree[i].currentPath + "" == oldPath + "") {
-                return i;
-            }
-        }
-
-        oldPath = oldPath.slice(0, oldPath.length - 1);
-
-        for (let i = 0; i < arrayOfTree.length; i++) {
-            if (arrayOfTree[i].currentPath + "" == oldPath + "") {
-                return i;
+            for (let i = 0; i < arrayOfTree.length; i++) {
+                if (arrayOfTree[i].currentPath + "" == oldPath + "") {
+                    return i;
+                }
             }
         }
     }
