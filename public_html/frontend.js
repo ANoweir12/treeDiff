@@ -72,6 +72,8 @@ function createBibliography() {
 
 
 function uploadTrees() {
+    resetTrees();
+
     const fileInput1 = document.getElementById('fileInput1');
     const fileInput2 = document.getElementById('fileInput2');
     const files1 = fileInput1.files;
@@ -79,79 +81,78 @@ function uploadTrees() {
 
     if (files1.length !== 1 || files2.length !== 1) {
         alert('Please select exactly 2 XML files');
-        return;
+        return Promise.reject(new Error('Invalid file selection'));
     }
 
     const reader1 = new FileReader();
     const reader2 = new FileReader();
 
-    let readFilesAndGetDiff = new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         reader1.onload = function (event) {
             const content1 = event.target.result;
             reader2.readAsText(files2[0]);
-            let combineTreesAndSendToServer = new Promise(resolve2 => {
-                reader2.onload = function (event) {
-                    const content2 = event.target.result;
+            reader2.onload = function (event) {
+                const content2 = event.target.result;
 
-                    // Combine the contents with '&'
-                    const combinedContent = content1.trim() + '&' + content2.trim();
-                    oldTreeText = content1;
-                    newTreeText = content2;
+                // Combine the contents with '&'
+                const combinedContent = content1.trim() + '&' + content2.trim();
+                oldTreeText = content1;
+                newTreeText = content2;
 
-                    // Send the combined content to the backend server
-                    new Promise(resolve => {
-                        sendTreesToServer(combinedContent, resolve)
-                    }).then(() => resolve2());
-                }
-            })
+                // Send the combined content to the backend server
+                sendTreesToServer(combinedContent)
+                    .then(() => resolve())
+                    .catch(error => reject(error));
+            };
+        };
 
-            combineTreesAndSendToServer.then(() => resolve());
-        }
-    })
-    reader1.readAsText(files1[0]);
-    return readFilesAndGetDiff;
+        reader1.readAsText(files1[0]);
+    });
 }
 
-// Function to send the process trees to the backend server
-function sendTreesToServer(content, resolve) {
-    fetch($('body').attr('data-backend'), {
+function sendTreesToServer(content) {
+    return fetch($('body').attr('data-backend'), {
         headers: {
             'Content-Type': 'text/xml'
         },
         method: 'POST',
         body: content
     })
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server response error: ${response.status} ${response.statusText}`);
+            }
+            return response.text();
+        })
         .then(diffFile => {
             globalDiffFile = diffFile;
-            // Display the diff file
             displayDiffFile(diffFile);
-            resolve();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Handle error if necessary
         });
 }
-
 // Function to display the diff file on the webpage
 function displayDiffFile(diffFile) {
     const diffOutput = document.getElementById('diffOutput');
     diffOutput.textContent = diffFile;
 }
-
 function displayTrees() {
+    uploadTrees()
+        .then(() => {
+            displayBothTrees(oldTreeText, '#oldTree', '#graphcanvas1', newTreeText, '#newTree', '#graphcanvas2');
+        })
+        .catch(error => {
+            console.error('Error during upload and processing:', error);
+        });
+}
+
+function resetTrees() {
     document.querySelector('#treeWrapper').innerHTML = '<div id="oldTree">\n' +
         '        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id="graphcanvas1" width="1" height="1" class="svgStyle"></svg>\n' +
         '    </div>\n' +
         '    <div id="newTree">\n' +
         '        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:x="http://www.w3.org/1999/xlink" id="graphcanvas2" width="1" height="1" class="svgStyle"></svg>\n' +
         '    </div>';
-
-    uploadTrees().then(() => {
-        displayBothTrees(oldTreeText, '#oldTree', '#graphcanvas1', newTreeText, '#newTree', '#graphcanvas2')
-    });
 }
+
 
 function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, newSvgId) {
     var parser, oldXmlDoc, oldXmlDocClone, newXmlDoc, cache;
