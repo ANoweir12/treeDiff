@@ -298,7 +298,7 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
                 for (let i = 0; i < children.length; i++) {
                     stringWithHtmlUpdated += children[i].outerHTML;
                     if (children[i].nodeName == "loop") {
-                        // Because it chenges the number of rows
+                        // Because it changes the number of rows
                         let newMode = children[i].getAttribute('mode');
                         let oldMode = arrayOfOldTreeClone[indexCurrentTree].treeElement.getAttribute('mode');
 
@@ -363,15 +363,24 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
             // currentNode.parentNode.insertBefore(emptyElement, currentNode);
             // currentNode.parentNode.insertBefore(textElement, currentNode);
         }
+
         if (arrayOfOldTree[indexForBoth].emptyInOtherTree) {
             const emptyElement = cache.createElement("empty");
             // const textElement = cache.createTextNode("\n    ");
 
             if (arrayOfNewTree[indexForBoth].isEnd) {
-                arrayOfNewTree[indexForBoth].treeElement.appendChild(emptyElement);
+                if (arrayOfNewTree[indexForBoth].treeElement.nodeName == "parallel") {
+                    arrayOfNewTree[indexForBoth - 1].treeElement.parentNode.appendChild(emptyElement);
+                } else {
+                    arrayOfNewTree[indexForBoth].treeElement.appendChild(emptyElement);
+                }
 
             } else {
-                arrayOfNewTree[indexForBoth].treeElement.parentNode.insertBefore(emptyElement, arrayOfNewTree[indexForBoth].treeElement);
+                if (arrayOfNewTree[indexForBoth].treeElement.nodeName == "parallel_branch") {
+                    arrayOfNewTree[indexForBoth - 1].treeElement.parentNode.appendChild(emptyElement);
+                } else {
+                    arrayOfNewTree[indexForBoth].treeElement.parentNode.insertBefore(emptyElement, arrayOfNewTree[indexForBoth].treeElement);
+                }
             }
             insertXMLElementInArray(emptyElement, [], [], indexForBoth, arrayOfOldTreeClone);
             insertXMLElementInArray(emptyElement, [], [], indexForBoth, arrayOfNewTree);
@@ -467,6 +476,25 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
             console.error(error);
         });
 
+}
+
+function insertEmptyElementInTree(arrayOfTree, index) {
+    const emptyElement = cache.createElement("empty");
+
+    if (arrayOfTree[index].isEnd) {
+        if (arrayOfTree[index].treeElement.nodeName == "parallel") {
+            arrayOfTree[index - 1].treeElement.parentNode.appendChild(emptyElement);
+        } else {
+            arrayOfTree[index].treeElement.appendChild(emptyElement);
+        }
+
+    } else {
+        if (arrayOfTree[index].treeElement.nodeName == "parallel_branch") {
+            arrayOfTree[index - 1].treeElement.parentNode.appendChild(emptyElement);
+        } else {
+            arrayOfTree[index].treeElement.parentNode.insertBefore(emptyElement, arrayOfTree[index].treeElement);
+        }
+    }
 }
 
 function displayOneTree(divId, svgId, xmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray) {
