@@ -149,11 +149,11 @@ function displayTrees() {
         '    </div>';
 
     uploadTrees().then(() => {
-        displayBothTrees2(oldTreeText, '#oldTree', '#graphcanvas1', newTreeText, '#newTree', '#graphcanvas2')
+        displayBothTrees(oldTreeText, '#oldTree', '#graphcanvas1', newTreeText, '#newTree', '#graphcanvas2')
     });
 }
 
-function displayBothTrees2(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, newSvgId) {
+function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, newSvgId) {
     var parser, oldXmlDoc, oldXmlDocClone, newXmlDoc, cache;
 
     let insertsArray = [];
@@ -456,9 +456,9 @@ function displayBothTrees2(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId,
     }
 
 
-    displayOneTree2(oldDivId, oldSvgId, oldXmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray)
+    displayOneTree(oldDivId, oldSvgId, oldXmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray)
         .then(() => {
-            displayOneTree2(newDivId, newSvgId, newXmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray).then(() => {
+            displayOneTree(newDivId, newSvgId, newXmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray).then(() => {
                 document.getElementById("oldTree").innerHTML += "";
                 document.getElementById("newTree").innerHTML += "";
             });
@@ -469,7 +469,7 @@ function displayBothTrees2(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId,
 
 }
 
-function displayOneTree2(divId, svgId, xmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray) {
+function displayOneTree(divId, svgId, xmlDoc, insertsArray, deleteArray, moveOldArray, moveNewArray, updateArray) {
     return new Promise(resolve => {
         let graphrealization = new WfAdaptor($('body').attr('data-wfadaptor') + '/cockpit/themes/extended/theme.js', function (graphrealization) {
 
