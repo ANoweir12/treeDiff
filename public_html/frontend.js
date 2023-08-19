@@ -351,76 +351,30 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
     for (indexForBoth = 0; (indexForBoth < arrayOfOldTreeClone.length) && (indexForBoth < arrayOfOldTree.length); indexForBoth++) {
         if (arrayOfOldTreeClone[indexForBoth].emptyInOtherTree) {
             const emptyElement = cache.createElement("empty");
-            // const textElement = cache.createTextNode("\n    ");
-
-            if (arrayOfOldTree[indexForBoth].isEnd) {
-                arrayOfOldTree[indexForBoth].treeElement.appendChild(emptyElement);
-
-            } else {
-                arrayOfOldTree[indexForBoth].treeElement.parentNode.insertBefore(emptyElement, arrayOfOldTree[indexForBoth].treeElement);
-            }
+            insertEmptyElementInTree(emptyElement, arrayOfOldTree, indexForBoth);
             insertXMLElementInArray(emptyElement, [], [], indexForBoth, arrayOfOldTree);
-            // currentNode.parentNode.insertBefore(emptyElement, currentNode);
-            // currentNode.parentNode.insertBefore(textElement, currentNode);
         }
 
         if (arrayOfOldTree[indexForBoth].emptyInOtherTree) {
             const emptyElement = cache.createElement("empty");
-            // const textElement = cache.createTextNode("\n    ");
-
-            if (arrayOfNewTree[indexForBoth].isEnd) {
-                if (arrayOfNewTree[indexForBoth].treeElement.nodeName == "parallel") {
-                    arrayOfNewTree[indexForBoth - 1].treeElement.parentNode.appendChild(emptyElement);
-                } else {
-                    arrayOfNewTree[indexForBoth].treeElement.appendChild(emptyElement);
-                }
-
-            } else {
-                if (arrayOfNewTree[indexForBoth].treeElement.nodeName == "parallel_branch") {
-                    arrayOfNewTree[indexForBoth - 1].treeElement.parentNode.appendChild(emptyElement);
-                } else {
-                    arrayOfNewTree[indexForBoth].treeElement.parentNode.insertBefore(emptyElement, arrayOfNewTree[indexForBoth].treeElement);
-                }
-            }
+            insertEmptyElementInTree(emptyElement, arrayOfNewTree, indexForBoth);
             insertXMLElementInArray(emptyElement, [], [], indexForBoth, arrayOfOldTreeClone);
             insertXMLElementInArray(emptyElement, [], [], indexForBoth, arrayOfNewTree);
-
-            // currentNode.parentNode.insertBefore(emptyElement, currentNode);
-            // currentNode.parentNode.insertBefore(textElement, currentNode);
         }
     }
     for (let i = indexForBoth; i < arrayOfOldTreeClone.length; i++) {
         if (arrayOfOldTreeClone[i].emptyInOtherTree) {
             const emptyElement = cache.createElement("empty");
-            // const textElement = cache.createTextNode("\n    ");
-
-            if (arrayOfOldTree[i].isEnd) {
-                arrayOfOldTree[i].treeElement.appendChild(emptyElement);
-
-            } else {
-                arrayOfOldTree[i].treeElement.parentNode.insertBefore(emptyElement, arrayOfOldTree[i].treeElement);
-            }
+            insertEmptyElementInTree(emptyElement, arrayOfOldTree, i);
             insertXMLElementInArray(emptyElement, [], [], i, arrayOfOldTree);
-            // currentNode.parentNode.insertBefore(emptyElement, currentNode);
-            // currentNode.parentNode.insertBefore(textElement, currentNode);
         }
     }
     for (let i = indexForBoth; i < arrayOfOldTree.length; i++) {
         if (arrayOfOldTree[i].emptyInOtherTree) {
             const emptyElement = cache.createElement("empty");
-            // const textElement = cache.createTextNode("\n    ");
-
-            if (arrayOfNewTree[i].isEnd) {
-                arrayOfNewTree[i].treeElement.appendChild(emptyElement);
-
-            } else {
-                arrayOfNewTree[i].treeElement.parentNode.insertBefore(emptyElement, arrayOfNewTree[i].treeElement);
-            }
+            insertEmptyElementInTree(emptyElement, arrayOfNewTree, i);
             insertXMLElementInArray(emptyElement, [], [], i, arrayOfOldTreeClone);
             insertXMLElementInArray(emptyElement, [], [], i, arrayOfNewTree);
-
-            // currentNode.parentNode.insertBefore(emptyElement, currentNode);
-            // currentNode.parentNode.insertBefore(textElement, currentNode);
         }
     }
 
@@ -478,19 +432,26 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
 
 }
 
-function insertEmptyElementInTree(arrayOfTree, index) {
-    const emptyElement = cache.createElement("empty");
-
+function insertEmptyElementInTree(emptyElement, arrayOfTree, index) {
     if (arrayOfTree[index].isEnd) {
         if (arrayOfTree[index].treeElement.nodeName == "parallel") {
-            arrayOfTree[index - 1].treeElement.parentNode.appendChild(emptyElement);
+            if (arrayOfTree[index - 1].treeElement.nodeName == "parallel_branch") {
+                // If empty parallel branch
+                arrayOfTree[index - 1].treeElement.appendChild(emptyElement);
+            } else {
+                arrayOfTree[index - 1].treeElement.parentNode.appendChild(emptyElement);
+            }
         } else {
             arrayOfTree[index].treeElement.appendChild(emptyElement);
         }
-
     } else {
         if (arrayOfTree[index].treeElement.nodeName == "parallel_branch") {
-            arrayOfTree[index - 1].treeElement.parentNode.appendChild(emptyElement);
+            if (arrayOfTree[index - 1].treeElement.nodeName == "parallel_branch") {
+                // If empty parallel branch
+                arrayOfTree[index - 1].treeElement.appendChild(emptyElement);
+            } else {
+                arrayOfTree[index - 1].treeElement.parentNode.appendChild(emptyElement);
+            }
         } else {
             arrayOfTree[index].treeElement.parentNode.insertBefore(emptyElement, arrayOfTree[index].treeElement);
         }
@@ -1068,3 +1029,4 @@ function necessaryEmptyCount(node) {
     }
     return count;
 }
+
