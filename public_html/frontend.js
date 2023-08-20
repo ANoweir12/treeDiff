@@ -34,7 +34,7 @@ function createBibliography() {
             colorCell.style.border = '1px solid black';
             // Striped rows
             if (i == 4) {
-                if (j ==0) {
+                if (j == 0) {
                     colorCell.style.backgroundImage = 'linear-gradient(45deg, #e3e372 25%, transparent 25%, transparent 50%, #e3e372 50%, #e3e372 75%, transparent 75%, #92ceec)'
                 } else {
                     colorCell.style.backgroundImage = 'linear-gradient(45deg, #cdcd67 25%, transparent 25%, transparent 50%, #cdcd67 50%, #cdcd67 75%, transparent 75%, #7eb3cd)'
@@ -56,7 +56,7 @@ function createBibliography() {
     // Add "Important: !" row as the last row
     const lastRow = document.createElement('tr');
     const importantCell = document.createElement('td');
-    importantCell.textContent = "Important: All child nodes of parallel nodes must be parallel branch nodes!";
+    importantCell.textContent = 'Important: All "parallel_branch" nodes must retain the same order!';
     importantCell.style.border = '1px solid black';
     importantCell.style.textAlign = 'center';
     importantCell.style.fontWeight = 'bold';
@@ -129,11 +129,13 @@ function sendTreesToServer(content) {
             displayDiffFile(diffFile);
         });
 }
+
 // Function to display the diff file on the webpage
 function displayDiffFile(diffFile) {
     const diffOutput = document.getElementById('diffOutput');
     diffOutput.textContent = diffFile;
 }
+
 function displayTrees() {
     uploadTrees()
         .then(() => {
@@ -227,22 +229,29 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
             const newPath = diffElement.getAttribute("newPath");
             if (newPath) {
                 const newPathArray = newPath.split("/").map(Number);
+                const parentPath = newPathArray.slice(0, newPathArray.length - 1);
+                setHasEndAttribute(arrayOfOldTreeClone, parentPath, diffElement.children[0]);
                 let index = insertInArrayAccordingToPath(arrayOfOldTreeClone, newPathArray, diffElement.children[0]);
-                for (let j = index; j < index + necessaryEmptyCount(diffElement.children[0]); j++) {
+                for (let j = index; j < index + necessaryEmptyCount(arrayOfOldTreeClone[index].treeElement); j++) {
                     arrayOfOldTreeClone[j].emptyInOtherTree = true;
                     arrayOfOldTreeClone[j].colorOperations.push("insert");
                 }
+                index = resolveParallelChildrenForInsert(arrayOfOldTreeClone, parentPath, index);
             }
         }
         if (diffElement.tagName === "delete") {
             const oldPath = diffElement.getAttribute("oldPath");
             if (oldPath) {
                 const oldPathArray = oldPath.split("/").map(Number);
+                const parentPath = oldPathArray.slice(0, oldPathArray.length - 1);
+
                 let index = deleteFromArrayAccordingToPath(arrayOfOldTreeClone, oldPathArray, arrayOfOldTree);
                 for (let j = index; j < index + necessaryEmptyCount(arrayOfOldTree[index].treeElement); j++) {
                     arrayOfOldTree[j].emptyInOtherTree = true;
                     arrayOfOldTree[j].colorOperations.push("delete");
                 }
+                resolveParallelChildrenForDelete(arrayOfOldTreeClone, parentPath, arrayOfOldTree[index].treeElement, arrayOfOldTree);
+
             }
         }
         if (diffElement.tagName === "move") {
@@ -266,13 +275,26 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
                     arrayOfOldTree[j].emptyInOtherTree = true;
                     arrayOfOldTree[j].colorOperations.push("move");
                 }
+                let parentPath = oldPathArray.slice(0, oldPathArray.length - 1);
+                resolveParallelChildrenForDelete(arrayOfOldTreeClone, parentPath, arrayOfOldTree[index].treeElement, arrayOfOldTree);
 
-
+                parentPath = newPathArray.slice(0, newPathArray.length - 1);
+                treeElement.setAttribute('hasEnd', 'false');
+                setHasEndAttribute(arrayOfOldTreeClone, parentPath, treeElement);
                 index = insertInArrayAccordingToPath(arrayOfOldTreeClone, newPathArray, treeElement);
+                index = resolveParallelChildrenForInsert(arrayOfOldTreeClone, parentPath, index);
+
 
                 for (let j = index; j < index + necessaryEmptyCount(arrayOfOldTreeClone[index].treeElement); j++) {
                     arrayOfOldTreeClone[j].colorOperations = colorOperations[j - index];
+                    if (!arrayOfOldTreeClone[j].colorOperations) {
+                        arrayOfOldTreeClone[j].colorOperations = colorOperations[0]
+                    }
                     arrayOfOldTreeClone[j].originPath = originPaths[j - index];
+                    if (!arrayOfOldTreeClone[j].originPath) {
+                        arrayOfOldTreeClone[j].originPath = originPaths[0]
+                    }
+
                     arrayOfOldTreeClone[j].emptyInOtherTree = true;
                     arrayOfOldTreeClone[j].colorOperations.push("move");
                     if (newPathArray > oldPathArray) {
@@ -351,6 +373,7 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
             }
         }
     }
+
     let indexForBoth = 0;
     for (indexForBoth = 0; (indexForBoth < arrayOfOldTreeClone.length) && (indexForBoth < arrayOfOldTree.length); indexForBoth++) {
         if (arrayOfOldTreeClone[indexForBoth].emptyInOtherTree) {
@@ -434,6 +457,138 @@ function displayBothTrees(oldTreeXML, oldDivId, oldSvgId, newTreeXML, newDivId, 
             console.error(error);
         });
 
+
+}
+
+function setHasEndAttribute(arrayOfTree, pathOfParallel, newElement) {
+    let indexOfParallel = -1;
+    let hadOtherNodes = false;
+    for (let i = 0; i < arrayOfTree.length; i++) {
+        if (arrayOfTree[i].currentPath + "" == pathOfParallel + "") {
+            indexOfParallel = i;
+            break;
+        }
+    }
+    if (indexOfParallel == -1 || arrayOfTree[indexOfParallel].treeElement.nodeName != "parallel" || newElement.nodeName != "parallel_branch") {
+        return;
+    }
+    let currentIndex = indexOfParallel + 1;
+    while (currentIndex < indexOfParallel + necessaryEmptyCount(arrayOfTree[indexOfParallel].treeElement) - 1) {
+        if (arrayOfTree[currentIndex].treeElement.nodeName != "parallel_branch") {
+            hadOtherNodes = true;
+            break;
+        }
+        currentIndex += necessaryEmptyCount(arrayOfTree[currentIndex].treeElement);
+    }
+    if (hadOtherNodes) {
+        newElement.setAttribute('hasEnd', 'true')
+    }
+}
+
+// after removing a non "parallel_branch" node from a parallel node
+function resolveParallelChildrenForDelete(arrayOfOldCloneTree, pathOfParallel, deletedElement, arrayOfOldTree) {
+    let indexOfParallel = -1;
+    let otherNodesLeft = false;
+    for (let i = 0; i < arrayOfOldCloneTree.length; i++) {
+        if (arrayOfOldCloneTree[i].currentPath + "" == pathOfParallel + "") {
+            indexOfParallel = i;
+            break;
+        }
+    }
+    if (indexOfParallel == -1 || arrayOfOldCloneTree[indexOfParallel].treeElement.nodeName != "parallel" || deletedElement.nodeName == "parallel_branch") {
+        return;
+    }
+
+    let currentIndex = indexOfParallel + 1;
+    while (currentIndex < indexOfParallel + necessaryEmptyCount(arrayOfOldCloneTree[indexOfParallel].treeElement) - 1) {
+        if (arrayOfOldCloneTree[currentIndex].treeElement.nodeName != "parallel_branch") {
+            otherNodesLeft = true;
+            break;
+        }
+        currentIndex += necessaryEmptyCount(arrayOfOldCloneTree[currentIndex].treeElement);
+    }
+    if (!otherNodesLeft) {
+        currentIndex = indexOfParallel + 1;
+        while (currentIndex < indexOfParallel + necessaryEmptyCount(arrayOfOldCloneTree[indexOfParallel].treeElement) - 1) {
+
+            arrayOfOldCloneTree[currentIndex].hasEnd = false;
+
+            deleteFromArray(arrayOfOldCloneTree, currentIndex + necessaryEmptyCount(arrayOfOldCloneTree[currentIndex].treeElement) - 1);
+
+
+            arrayOfOldCloneTree[currentIndex].treeElement.setAttribute('hasEnd', 'false')
+
+            currentIndex += necessaryEmptyCount(arrayOfOldCloneTree[currentIndex].treeElement);
+        }
+    }
+
+    let indexOfParallelOrigin = -1;
+    let originPathParallel = arrayOfOldCloneTree[indexOfParallel].originPath;
+    for (let i = 0; i < arrayOfOldTree.length; i++) {
+        if (arrayOfOldTree[i].currentPath + "" == originPathParallel + "") {
+            indexOfParallelOrigin = i;
+            break;
+        }
+    }
+    if (indexOfParallelOrigin == -1) {
+        throw new Error("Could not find origin node")
+    }
+    currentIndex = indexOfParallelOrigin + 1;
+    while (currentIndex < indexOfParallelOrigin + necessaryEmptyCount(arrayOfOldTree[indexOfParallelOrigin].treeElement)) {
+        if (arrayOfOldTree[currentIndex].treeElement.nodeName == "parallel_branch") {
+            arrayOfOldTree[currentIndex + necessaryEmptyCount(arrayOfOldTree[currentIndex].treeElement) - 1].emptyInOtherTree = true;
+        }
+        currentIndex += necessaryEmptyCount(arrayOfOldTree[currentIndex].treeElement);
+    }
+}
+
+// If we have inserted a non "parallel_branch" node into a parallel node
+function resolveParallelChildrenForInsert(arrayOfTree, pathOfParallel, indexOfNewElement) {
+    let indexOfParallel = -1;
+    let hadOtherNodes = false;
+    let currentPathOfNewElement = JSON.parse(JSON.stringify(arrayOfTree[indexOfNewElement].currentPath));
+    for (let i = 0; i < arrayOfTree.length; i++) {
+        if (arrayOfTree[i].currentPath + "" == pathOfParallel + "") {
+            indexOfParallel = i;
+            break;
+        }
+    }
+    if (indexOfParallel == -1 || arrayOfTree[indexOfParallel].treeElement.nodeName != "parallel" || arrayOfTree[indexOfNewElement].treeElement.nodeName == "parallel_branch") {
+        return indexOfNewElement;
+    }
+    let currentIndex = indexOfParallel + 1;
+    while (currentIndex < indexOfParallel + necessaryEmptyCount(arrayOfTree[indexOfParallel].treeElement) - 1) {
+        if (indexOfNewElement != currentIndex) {
+            if (arrayOfTree[currentIndex].treeElement.nodeName != "parallel_branch") {
+                hadOtherNodes = true;
+                break;
+            }
+        }
+        currentIndex += necessaryEmptyCount(arrayOfTree[currentIndex].treeElement);
+    }
+
+    if (!hadOtherNodes) {
+        currentIndex = indexOfParallel + 1;
+        while (currentIndex < indexOfParallel + necessaryEmptyCount(arrayOfTree[indexOfParallel].treeElement) - 1) {
+            if (arrayOfTree[currentIndex].treeElement.nodeName == "parallel_branch") {
+                arrayOfTree[currentIndex].hasEnd = true;
+                insertInArray(arrayOfTree, currentIndex + necessaryEmptyCount(arrayOfTree[currentIndex].treeElement), {
+                    isStart: false,
+                    hasEnd: true,
+                    isEnd: true,
+                    treeElement: arrayOfTree[currentIndex].treeElement,
+                    originPath: JSON.parse(JSON.stringify(arrayOfTree[currentIndex].originPath)),
+                    currentPath: JSON.parse(JSON.stringify(arrayOfTree[currentIndex].currentPath)),
+                    colorOperations: JSON.parse(JSON.stringify(arrayOfTree[currentIndex].colorOperations)),
+                    emptyInOtherTree: true
+                })
+                arrayOfTree[currentIndex].treeElement.setAttribute('hasEnd', 'true')
+            }
+
+            currentIndex += necessaryEmptyCount(arrayOfTree[currentIndex].treeElement);
+        }
+    }
+    return getIndexFromArrayAccordingToPath(arrayOfTree, currentPathOfNewElement, false);
 }
 
 function insertEmptyElementInTree(emptyElement, arrayOfTree, index) {
@@ -600,6 +755,10 @@ function displayOneTree(divId, svgId, xmlDoc, insertsArray, deleteArray, moveOld
 }
 
 function insertInArrayAccordingToPath(arrayOfTree, newPath, element) {
+    const parentPath = newPath.slice(0, newPath.length - 1);
+    let index = getIndexFromArrayAccordingToPath(arrayOfTree, parentPath, false);
+    arrayOfTree[index].treeElement.appendChild(element)
+
     for (let i = 0; i < arrayOfTree.length; i++) {
         if (arrayOfTree[i].currentPath + "" == newPath + "") {
             insertXMLElementInArray(element, [], newPath, i, arrayOfTree)
@@ -627,14 +786,17 @@ function insertInArrayAccordingToPath(arrayOfTree, newPath, element) {
 
             return i;
         } else {
-            if (arrayOfTree[i].currentPath > newPath) {
-                if (arrayOfTree[i - 1].isEnd == true) {
-                    insertXMLElementInArray(element, [], newPath, i - 1, arrayOfTree)
-                    return i - 1;
-                } else {
-                    insertXMLElementInArray(element, [], newPath, i, arrayOfTree)
-                    return i;
+            if (arrayOfTree[i].currentPath > newPath || i == arrayOfTree.length - 1) {
+                let j = i;
+                while (arrayOfTree[j - 1].isEnd == true) {
+                    if (arrayOfTree[j - 1].currentPath.length == newPath.length) {
+                        break;
+                    }
+                    j--;
                 }
+                insertXMLElementInArray(element, [], newPath, j, arrayOfTree);
+                return j;
+
             }
             if (i == arrayOfTree.length - 1) {
                 insertXMLElementInArray(element, [], newPath, i, arrayOfTree)
@@ -651,6 +813,7 @@ function deleteFromArrayAccordingToPath(arrayOfTree, oldPath, oldArrayOfTree) {
         if (arrayOfTree[i].currentPath + "" == oldPath + "") {
             let size = necessaryEmptyCount(arrayOfTree[i].treeElement);
             oldTreePath = JSON.parse(JSON.stringify(arrayOfTree[i].originPath));
+            arrayOfTree[i].treeElement.remove();
 
             for (let j = i; j < i + size; j++) {
                 // i because j will have been deleted
@@ -823,7 +986,6 @@ function childrenToArray(rootNode, pathRootNode, indexStartRootInArray, arrayOfT
             case "alternative":
             case "otherwise":
             case "critical":
-            case "parallel_branch":
                 insertInArray(arrayOfTree, indexStartRootInArray + (j + 1), {
                     isStart: true,
                     hasEnd: false,
@@ -835,6 +997,54 @@ function childrenToArray(rootNode, pathRootNode, indexStartRootInArray, arrayOfT
                     emptyInOtherTree: false
                 })
                 childrenToArray(children[i], newPath, indexStartRootInArray + (j + 1), arrayOfTree, isOriginPathEmpty)
+                break;
+            case "parallel_branch":
+                let parallelOnlyHasParallelBranches = true;
+                for (let z = 0; z < children.length; z++) {
+                    if (children[z].nodeName != "parallel_branch") {
+                        parallelOnlyHasParallelBranches = false;
+                        break;
+                    }
+                }
+                // In case root is loop
+                if (rootNode.nodeName != "parallel") {
+                    parallelOnlyHasParallelBranches = false;
+                }
+                if (parallelOnlyHasParallelBranches) {
+                    insertInArray(arrayOfTree, indexStartRootInArray + (j + 1), {
+                        isStart: true,
+                        hasEnd: false,
+                        isEnd: false,
+                        treeElement: children[i],
+                        originPath: isOriginPathEmpty ? [] : JSON.parse(JSON.stringify(newPath)),
+                        currentPath: JSON.parse(JSON.stringify(newPath)),
+                        colorOperations: [],
+                        emptyInOtherTree: false
+                    })
+                } else {
+                    children[i].setAttribute('hasEnd', 'true')
+                    insertInArray(arrayOfTree, indexStartRootInArray + (j + 1), {
+                        isStart: true,
+                        hasEnd: true,
+                        isEnd: false,
+                        treeElement: children[i],
+                        originPath: isOriginPathEmpty ? [] : JSON.parse(JSON.stringify(newPath)),
+                        currentPath: JSON.parse(JSON.stringify(newPath)),
+                        colorOperations: [],
+                        emptyInOtherTree: false
+                    })
+                    insertInArray(arrayOfTree, indexStartRootInArray + (j + 2), {
+                        isStart: false,
+                        hasEnd: true,
+                        isEnd: true,
+                        treeElement: children[i],
+                        originPath: isOriginPathEmpty ? [] : JSON.parse(JSON.stringify(newPath)),
+                        currentPath: JSON.parse(JSON.stringify(newPath)),
+                        colorOperations: [],
+                        emptyInOtherTree: false
+                    })
+                }
+                childrenToArray(children[i], newPath, indexStartRootInArray + (j + 1), arrayOfTree, isOriginPathEmpty);
                 break;
             default:
                 insertInArray(arrayOfTree, indexStartRootInArray + (j + 1), {
@@ -918,7 +1128,6 @@ function insertXMLElementInArray(element, originPath, currentPath, index, arrayO
         case "alternative":
         case "otherwise":
         case "critical":
-        case "parallel_branch":
             insertInArray(arrayOfTree, index, {
                 isStart: true,
                 hasEnd: false,
@@ -929,6 +1138,43 @@ function insertXMLElementInArray(element, originPath, currentPath, index, arrayO
                 colorOperations: [],
                 emptyInOtherTree: false
             })
+            childrenToArray(element, currentPath, index, arrayOfTree, true);
+            break;
+        case "parallel_branch":
+            let hasEnd = element.getAttribute('hasEnd')
+            if (hasEnd && hasEnd == "true") {
+                insertInArray(arrayOfTree, index, {
+                    isStart: true,
+                    hasEnd: true,
+                    isEnd: false,
+                    treeElement: element,
+                    originPath: JSON.parse(JSON.stringify(originPath)),
+                    currentPath: JSON.parse(JSON.stringify(currentPath)),
+                    colorOperations: [],
+                    emptyInOtherTree: false
+                })
+                insertInArray(arrayOfTree, index + 1, {
+                    isStart: false,
+                    hasEnd: true,
+                    isEnd: true,
+                    treeElement: element,
+                    originPath: JSON.parse(JSON.stringify(originPath)),
+                    currentPath: JSON.parse(JSON.stringify(currentPath)),
+                    colorOperations: [],
+                    emptyInOtherTree: false
+                })
+            } else {
+                insertInArray(arrayOfTree, index, {
+                    isStart: true,
+                    hasEnd: false,
+                    isEnd: false,
+                    treeElement: element,
+                    originPath: JSON.parse(JSON.stringify(originPath)),
+                    currentPath: JSON.parse(JSON.stringify(currentPath)),
+                    colorOperations: [],
+                    emptyInOtherTree: false
+                })
+            }
             childrenToArray(element, currentPath, index, arrayOfTree, true);
             break;
         default:
@@ -1016,8 +1262,18 @@ function necessaryEmptyCount(node) {
         case "alternative":
         case "otherwise":
         case "critical":
-        case "parallel_branch":
             count += 1;
+            for (let i = 0; i < node.children.length; i++) {
+                count += necessaryEmptyCount(node.children[i]);
+            }
+            break;
+        case "parallel_branch":
+            let hasEnd = node.getAttribute('hasEnd')
+            if (hasEnd && hasEnd == "true") {
+                count += 2;
+            } else {
+                count += 1;
+            }
             for (let i = 0; i < node.children.length; i++) {
                 count += necessaryEmptyCount(node.children[i]);
             }
