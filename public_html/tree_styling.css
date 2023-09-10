@@ -9,6 +9,10 @@
     right: 20px;
 }
 
+hr {
+    margin-top: 30px;
+}
+
 rect.diffaddodd{
     fill: #ABF5D1 !important;
 }

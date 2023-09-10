@@ -53,17 +53,31 @@ function createBibliography() {
         table.appendChild(row);
     }
 
-    // Add "Important: !" row as the last row
-    const lastRow = document.createElement('tr');
-    const importantCell = document.createElement('td');
-    importantCell.textContent = 'Important: All "parallel_branch" nodes must retain the same order!';
-    importantCell.style.border = '1px solid black';
-    importantCell.style.textAlign = 'center';
-    importantCell.style.fontWeight = 'bold';
-    importantCell.style.backgroundColor = '#FFFF99'; // Yellow background
-    importantCell.colSpan = 3; // Span across all columns
-    lastRow.appendChild(importantCell);
-    table.appendChild(lastRow);
+    // Add "Important: !" rows as the 2 last rows
+    const firstImportantRow = document.createElement('tr');
+    const secondImportantRow = document.createElement('tr');
+
+    const firstImportantCell = document.createElement('td');
+    const secondImportantCell = document.createElement('td');
+
+    firstImportantCell.textContent = 'Important: Empty "parallel_branch" nodes are not allowed!';
+    firstImportantCell.style.border = '1px solid black';
+    firstImportantCell.style.textAlign = 'center';
+    firstImportantCell.style.fontWeight = 'bold';
+    firstImportantCell.style.backgroundColor = '#FFFF99'; // Yellow background
+    firstImportantCell.colSpan = 3; // Span across all columns
+
+    secondImportantCell.textContent = 'Important: All "parallel_branch" nodes must retain the same order!';
+    secondImportantCell.style.border = '1px solid black';
+    secondImportantCell.style.textAlign = 'center';
+    secondImportantCell.style.fontWeight = 'bold';
+    secondImportantCell.style.backgroundColor = '#FFFF99'; // Yellow background
+    secondImportantCell.colSpan = 3; // Span across all columns
+
+    firstImportantRow.appendChild(firstImportantCell)
+    secondImportantRow.appendChild(secondImportantCell);
+    table.appendChild(firstImportantRow);
+    table.appendChild(secondImportantRow);
 
 
     const bibliographyDiv = document.getElementById('bibliography');
