@@ -1,0 +1,46 @@
+<description xmlns="http://cpee.org/ns/description/1.0">
+    <call id="reserve5" endpoint="billing">
+        <parameters>
+            <label>Bill customer</label>
+            <method>:post</method>
+            <arguments>
+                <card>data.card</card>
+                <amount>data.amount</amount>
+            </arguments>
+        </parameters>
+    </call>
+
+    <call id="reserve1" endpoint="reserve">
+        <parameters>
+            <label>Reserve items</label>
+            <method>:post</method>
+            <arguments>
+                <items>data.items</items>
+            </arguments>
+        </parameters>
+    </call>
+    <manipulate id="manipul1">data.shipped = false;</manipulate>
+    <manipulate id="manipul3">data.shipped = false;</manipulate>
+    <parallel>
+        <parallel_branch>
+            <manipulate>
+                data.total = data.items.map(i => i.price).sum();
+                data.total *= 1.19;
+            </manipulate>
+        </parallel_branch>
+        <parallel_branch>
+            <manipulate>data.index = 0;</manipulate>
+            <loop condition="data.index = data.items.length">
+                <call endpoint="ship">
+                    <parameters>
+                        <method>:post</method>
+                        <arguments>
+                            <item>data.items[data.index--]</item>
+                        </arguments>
+                    </parameters>
+                </call>
+            </loop>
+        </parallel_branch>
+    </parallel>
+
+</description>

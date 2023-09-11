@@ -1,0 +1,37 @@
+<description xmlns="http://cpee.org/ns/description/1.0">
+    <call id="reserve5" endpoint="billing">
+        <parameters>
+            <label>Bill customer</label>
+            <method>:post</method>
+            <arguments>
+                <card>data.card</card>
+                <amount>data.amount</amount>
+            </arguments>
+        </parameters>
+    </call>
+    <manipulate id="manipul3">data.shipped = false;</manipulate>
+
+    <call id="reserve1" endpoint="reserve">
+        <parameters>
+            <label>Reserve items</label>
+            <method>:post</method>
+            <arguments>
+                <items>data.items</items>
+            </arguments>
+        </parameters>
+    </call>
+    <manipulate id="manipul1">data.shipped = false;</manipulate>
+<!--    <loop condition="data.items.length > 0">-->
+<!--        <call id="a2" endpoint="shipItem">-->
+<!--            <parameters>-->
+<!--                <label>Initiate shipping to customer</label>-->
+<!--                <method>:post</method>-->
+<!--                <arguments>-->
+<!--                    <item>data.items.pop()</item>-->
+<!--                    <to>data.address</to>-->
+<!--                </arguments>-->
+<!--            </parameters>-->
+<!--        </call>-->
+<!--    </loop>-->
+
+</description>
