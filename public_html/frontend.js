@@ -44,7 +44,6 @@ function createBibliography() {
             row.appendChild(colorCell);
         }
 
-        // Create the explanation cell
         const explanationCell = document.createElement('td');
         explanationCell.textContent = explanations[i];
         explanationCell.style.border = '1px solid black';
@@ -108,12 +107,11 @@ function uploadTrees() {
             reader2.onload = function (event) {
                 const content2 = event.target.result;
 
-                // Combine the contents with '&'
+                // Combine the trees with '&'
                 const combinedContent = content1.trim() + '&' + content2.trim();
                 oldTreeText = content1;
                 newTreeText = content2;
 
-                // Send the combined content to the backend server
                 sendTreesToServer(combinedContent)
                     .then(() => resolve())
                     .catch(error => reject(error));
@@ -144,7 +142,6 @@ function sendTreesToServer(content) {
         });
 }
 
-// Function to display the diff file on the webpage
 function displayDiffFile(diffFile) {
     const diffOutput = document.getElementById('diffOutput');
     diffOutput.textContent = diffFile;
@@ -834,7 +831,7 @@ function deleteFromArrayAccordingToPath(arrayOfTree, oldPath, oldArrayOfTree) {
                 deleteFromArray(arrayOfTree, i);
             }
 
-            // Shift other paths one step backwards
+            // Shift other paths one step backward
             let pathLength = oldPath.length;
             for (let j = i; j < arrayOfTree.length; j++) {
                 let shouldIndexBeShifted = true;
@@ -1215,7 +1212,6 @@ function insertInArray(array, index, element) {
         array[i] = array[i - 1];
     }
 
-    // Insert the new element at the specified index
     array[index] = element;
 }
 
@@ -1229,7 +1225,6 @@ function deleteFromArray(array, index) {
         array[i] = array[i + 1];
     }
 
-    // Remove the last element (now duplicated)
     array.pop();
 }
 
